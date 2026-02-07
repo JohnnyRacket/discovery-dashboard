@@ -15,7 +15,6 @@ export async function getBlob<T>(url: string): Promise<T | null> {
     return data ? (JSON.parse(data) as T) : null
   }
   const res = await fetch(url, {
-    cache: "no-store",
     signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   })
   if (!res.ok) return null

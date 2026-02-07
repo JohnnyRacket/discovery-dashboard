@@ -3,8 +3,8 @@ import { FollowUpEntry } from "@/lib/data/follow-ups"
 import { SessionList } from "./session-list"
 import { FollowUpPanel } from "./follow-up-panel"
 import { NeedsSummary } from "./needs-summary"
+import { ClientHeader } from "./client-header"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 
 interface ClientDashboardProps {
@@ -17,16 +17,7 @@ export function ClientDashboard({ client, sessions, followUps }: ClientDashboard
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{client.name}</h1>
-          <p className="text-muted-foreground">{client.company}</p>
-          <div className="flex gap-2 mt-2">
-            {client.industry && <Badge variant="secondary">{client.industry}</Badge>}
-            {client.contactEmail && (
-              <span className="text-sm text-muted-foreground">{client.contactEmail}</span>
-            )}
-          </div>
-        </div>
+        <ClientHeader client={client} />
         <Button asChild>
           <Link href={`/clients/${client.id}/sessions/new`}>New Session</Link>
         </Button>
@@ -39,7 +30,7 @@ export function ClientDashboard({ client, sessions, followUps }: ClientDashboard
         </div>
         <div className="space-y-4">
           <FollowUpPanel followUps={followUps} clientId={client.id} />
-          <NeedsSummary />
+          <NeedsSummary clientId={client.id} initialNeeds={client.needsSummary} />
         </div>
       </div>
     </div>

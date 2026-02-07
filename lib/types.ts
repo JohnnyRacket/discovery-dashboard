@@ -1,4 +1,4 @@
-export type SubItemType = "note" | "special-case" | "follow-up" | "action-item" | "requirement" | "objection" | "decision"
+export type SubItemType = "note" | "follow-up" | "special-case" | "requirement"
 
 export interface SubItem {
   id: string
@@ -28,6 +28,7 @@ export interface Session {
   title: string
   discoveryItems: DiscoveryItem[]
   notes: string
+  summary?: string
   status: "active" | "completed"
   createdAt: string
   updatedAt: string
@@ -41,6 +42,7 @@ export interface Client {
   contactPhone?: string
   industry?: string
   notes?: string
+  needsSummary?: string[]
   createdAt: string
   updatedAt: string
 }

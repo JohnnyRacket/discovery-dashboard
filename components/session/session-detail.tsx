@@ -1,6 +1,7 @@
 "use client"
 
 import { useReducer, useState, useCallback, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Session, SubItemType } from "@/lib/types"
 import { sessionReducer, SessionAction } from "./session-reducer"
 import { DiscoveryItemCard } from "./discovery-item"
@@ -15,15 +16,18 @@ interface SessionDetailProps {
 }
 
 export function SessionDetail({ initialSession }: SessionDetailProps) {
+  const router = useRouter()
   const [session, dispatch] = useReducer(sessionReducer, initialSession)
   const [activeItemId, setActiveItemId] = useState<string | null>(null)
   const [activeSubItemId, setActiveSubItemId] = useState<string | null>(null)
+  const [focusTitleItemId, setFocusTitleItemId] = useState<string | null>(null)
   const [focusKey, setFocusKey] = useState(0)
   const { status, forceSave } = useDebouncedSave(session)
 
   const setActive = useCallback((itemId: string, subItemId: string | null) => {
     setActiveItemId(itemId)
     setActiveSubItemId(subItemId)
+    setFocusTitleItemId(null)
     setFocusKey((k) => k + 1)
   }, [])
 
@@ -81,51 +85,31 @@ export function SessionDetail({ initialSession }: SessionDetailProps) {
     [session.discoveryItems, setActive]
   )
 
-  const handleNavigateLeft = useCallback(
+  const handleConfirmAndNextItem = useCallback(
     (itemIndex: number) => {
-      if (itemIndex > 0) {
-        const prevItem = session.discoveryItems[itemIndex - 1]
-        if (prevItem.subItems.length > 0) {
-          setActive(prevItem.id, prevItem.subItems[0].id)
-        }
-      }
-    },
-    [session.discoveryItems, setActive]
-  )
-
-  const handleNavigateRight = useCallback(
-    (itemIndex: number) => {
-      if (itemIndex < session.discoveryItems.length - 1) {
-        const nextItem = session.discoveryItems[itemIndex + 1]
-        if (nextItem.subItems.length > 0) {
-          setActive(nextItem.id, nextItem.subItems[0].id)
-        }
-      }
-    },
-    [session.discoveryItems, setActive]
-  )
-
-  const handleAddDiscoveryItem = useCallback(
-    (afterIndex: number) => {
-      dispatch({ type: "ADD_DISCOVERY_ITEM", afterIndex })
+      // Always add a new discovery item after the current one
+      // Focus is handled by the useEffect that detects new items
+      dispatch({ type: "ADD_DISCOVERY_ITEM", afterIndex: itemIndex })
     },
     []
   )
 
-  const handleConfirmAndNextItem = useCallback(
-    (itemIndex: number) => {
-      if (itemIndex < session.discoveryItems.length - 1) {
-        const nextItem = session.discoveryItems[itemIndex + 1]
-        if (nextItem.subItems.length > 0) {
-          setActive(nextItem.id, nextItem.subItems[0].id)
-        }
-      } else {
-        // Add a new discovery item
-        dispatch({ type: "ADD_DISCOVERY_ITEM" })
+  // After ADD_DISCOVERY_ITEM, focus the new item's title
+  const [prevItemCount, setPrevItemCount] = useState(session.discoveryItems.length)
+
+  useEffect(() => {
+    if (session.discoveryItems.length > prevItemCount) {
+      // A new item was added - find it (it has an empty title)
+      const newItem = session.discoveryItems.find((item) => item.title === "" && item.subItems.length === 1 && item.subItems[0].content === "")
+      if (newItem) {
+        setActiveItemId(newItem.id)
+        setActiveSubItemId(null)
+        setFocusTitleItemId(newItem.id)
+        setFocusKey((k) => k + 1)
       }
-    },
-    [session.discoveryItems, setActive]
-  )
+    }
+    setPrevItemCount(session.discoveryItems.length)
+  }, [session.discoveryItems.length, prevItemCount])
 
   const handleQuickAdd = useCallback(
     (itemId: string, type: SubItemType) => {
@@ -138,7 +122,8 @@ export function SessionDetail({ initialSession }: SessionDetailProps) {
   const handleComplete = useCallback(async () => {
     await completeSessionAction(session.id, session.clientId)
     dispatch({ type: "SET_STATUS", status: "completed" })
-  }, [session.id, session.clientId])
+    router.push(`/clients/${session.clientId}`)
+  }, [session.id, session.clientId, router])
 
   // Collapse/expand keyboard shortcuts
   useEffect(() => {
@@ -175,13 +160,11 @@ export function SessionDetail({ initialSession }: SessionDetailProps) {
             itemIndex={index}
             activeSubItemId={activeItemId === item.id ? activeSubItemId : null}
             focusKey={focusKey}
+            focusTitleItemId={focusTitleItemId}
             dispatch={dispatch}
             onSetActive={setActive}
             onNavigateUp={handleNavigateUp}
             onNavigateDown={handleNavigateDown}
-            onNavigateLeft={handleNavigateLeft}
-            onNavigateRight={handleNavigateRight}
-            onAddDiscoveryItem={handleAddDiscoveryItem}
             onConfirmAndNextItem={handleConfirmAndNextItem}
             onQuickAdd={handleQuickAdd}
             onSave={forceSave}

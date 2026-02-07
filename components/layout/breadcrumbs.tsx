@@ -2,7 +2,6 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Separator } from "@/components/ui/separator"
 
 export function Breadcrumbs() {
   const pathname = usePathname()
@@ -20,7 +19,8 @@ export function Breadcrumbs() {
     } else if (seg === "new") {
       crumbs.push({ label: "New", href })
     } else if (seg === "sessions") {
-      crumbs.push({ label: "Sessions", href })
+      // Skip - not a real page, just a URL segment
+      continue
     } else if (segments[i - 1] === "clients") {
       crumbs.push({ label: "Client", href })
     } else if (segments[i - 1] === "sessions") {

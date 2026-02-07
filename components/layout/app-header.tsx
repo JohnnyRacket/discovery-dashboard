@@ -3,13 +3,20 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
 import { Breadcrumbs } from "./breadcrumbs"
 import { CommandPalette } from "@/components/shared/command-palette"
 import { useKeyboardShortcutContext } from "@/components/providers/keyboard-shortcut-provider"
+import { usePrivacyMode } from "@/components/providers/privacy-mode-provider"
 import { useEffect } from "react"
 
 export function AppHeader() {
   const { setShowHelp, showCommandPalette, setShowCommandPalette } = useKeyboardShortcutContext()
+  const pathname = usePathname()
+  const { privacyClientId, setPrivacyClientId, clearPrivacy } = usePrivacyMode()
+
+  const clientIdFromPath = pathname.match(/^\/clients\/([^/]+)/)?.[1] ?? null
+  const showPrivacyToggle = clientIdFromPath !== null || privacyClientId !== null
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -37,6 +44,25 @@ export function AppHeader() {
             <Breadcrumbs />
           </div>
           <div className="flex items-center gap-2">
+            {showPrivacyToggle && (
+              <div className="flex items-center gap-1.5 mr-2">
+                <Switch
+                  id="privacy-mode"
+                  checked={privacyClientId !== null}
+                  onCheckedChange={(checked) => {
+                    if (checked && clientIdFromPath) {
+                      setPrivacyClientId(clientIdFromPath)
+                    } else {
+                      clearPrivacy()
+                    }
+                  }}
+                  aria-label="Privacy mode"
+                />
+                <label htmlFor="privacy-mode" className="text-xs text-muted-foreground cursor-pointer select-none">
+                  Privacy
+                </label>
+              </div>
+            )}
             <Button
               variant="outline"
               size="sm"

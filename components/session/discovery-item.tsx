@@ -13,13 +13,11 @@ interface DiscoveryItemProps {
   itemIndex: number
   activeSubItemId: string | null
   focusKey: number
+  focusTitleItemId: string | null
   dispatch: React.Dispatch<SessionAction>
   onSetActive: (itemId: string, subItemId: string | null) => void
   onNavigateUp: (itemId: string, subItemIndex: number) => void
   onNavigateDown: (itemId: string, subItemIndex: number) => void
-  onNavigateLeft: (itemIndex: number) => void
-  onNavigateRight: (itemIndex: number) => void
-  onAddDiscoveryItem: (afterIndex: number) => void
   onConfirmAndNextItem: (itemIndex: number) => void
   onQuickAdd: (itemId: string, type: SubItemType) => void
   onSave: () => void
@@ -30,18 +28,22 @@ export function DiscoveryItemCard({
   itemIndex,
   activeSubItemId,
   focusKey,
+  focusTitleItemId,
   dispatch,
   onSetActive,
   onNavigateUp,
   onNavigateDown,
-  onNavigateLeft,
-  onNavigateRight,
-  onAddDiscoveryItem,
   onConfirmAndNextItem,
   onQuickAdd,
   onSave,
 }: DiscoveryItemProps) {
   const titleRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (focusTitleItemId === item.id && titleRef.current) {
+      titleRef.current.focus()
+    }
+  }, [focusTitleItemId, item.id, focusKey])
 
   return (
     <Card className="border-l-4 border-l-primary/30">
@@ -65,7 +67,7 @@ export function DiscoveryItemCard({
               onChange={(e) =>
                 dispatch({ type: "UPDATE_DISCOVERY_ITEM_TITLE", itemId: item.id, title: e.target.value })
               }
-              className="flex-1 bg-transparent font-medium outline-none placeholder:text-muted-foreground/50"
+              className="flex-1 bg-transparent text-lg font-semibold outline-none placeholder:text-muted-foreground/50"
               placeholder="Discovery topic or question..."
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -122,7 +124,6 @@ export function DiscoveryItemCard({
                     })
                   }
                   onConfirm={() => {
-                    // Add new sub-item of same type
                     dispatch({ type: "ADD_SUB_ITEM", itemId: item.id, subItemType: subItem.type })
                   }}
                   onConfirmAndNext={() => onConfirmAndNextItem(itemIndex)}
@@ -131,11 +132,13 @@ export function DiscoveryItemCard({
                   onToggleImportant={() => dispatch({ type: "TOGGLE_IMPORTANT", itemId: item.id, subItemId: subItem.id })}
                   onNavigateUp={() => onNavigateUp(item.id, subIndex)}
                   onNavigateDown={() => onNavigateDown(item.id, subIndex)}
-                  onNavigateLeft={() => onNavigateLeft(itemIndex)}
-                  onNavigateRight={() => onNavigateRight(itemIndex)}
-                  onAddDiscoveryItem={() => onAddDiscoveryItem(itemIndex)}
                   onQuickAddFollowUp={() => onQuickAdd(item.id, "follow-up")}
-                  onQuickAddActionItem={() => onQuickAdd(item.id, "action-item")}
+                  onDiscardIfEmpty={() => {
+                    // Don't delete if it's the only sub-item
+                    if (item.subItems.length > 1) {
+                      dispatch({ type: "DELETE_SUB_ITEM", itemId: item.id, subItemId: subItem.id })
+                    }
+                  }}
                   onSave={onSave}
                   onFocus={() => onSetActive(item.id, subItem.id)}
                 />

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { AppHeader } from "@/components/layout/app-header"
 import { KeyboardShortcutProvider } from "@/components/providers/keyboard-shortcut-provider"
+import { PrivacyModeProvider } from "@/components/providers/privacy-mode-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
 const geistSans = Geist({
@@ -29,12 +30,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}>
         <TooltipProvider>
-          <KeyboardShortcutProvider>
-            <div className="min-h-screen flex flex-col">
-              <AppHeader />
-              <main className="flex-1">{children}</main>
-            </div>
-          </KeyboardShortcutProvider>
+          <PrivacyModeProvider>
+            <KeyboardShortcutProvider>
+              <div className="min-h-screen flex flex-col">
+                <AppHeader />
+                <main className="flex-1">{children}</main>
+              </div>
+            </KeyboardShortcutProvider>
+          </PrivacyModeProvider>
         </TooltipProvider>
       </body>
     </html>

@@ -26,7 +26,7 @@ export async function rebuildFollowUpIndex(session: Session): Promise<void> {
   const newEntries: FollowUpEntry[] = []
   for (const item of session.discoveryItems) {
     for (const sub of item.subItems) {
-      if ((sub.type === "follow-up" || sub.type === "action-item") && !sub.resolved) {
+      if (sub.type === "follow-up" && !sub.resolved) {
         newEntries.push({
           clientId,
           sessionId: session.id,

@@ -22,6 +22,7 @@ export async function createSessionAction(formData: FormData) {
     updatedAt: now,
   }
   await createSession(session)
+  revalidatePath(`/clients/${clientId}`)
   redirect(`/clients/${clientId}/sessions/${session.id}`)
 }
 
@@ -29,7 +30,18 @@ export async function saveSessionAction(session: Session) {
   session.updatedAt = new Date().toISOString()
   await updateSession(session)
   await rebuildFollowUpIndex(session)
+  revalidatePath(`/clients/${session.clientId}/sessions/${session.id}`)
   return { success: true }
+}
+
+export async function saveSessionSummary(sessionId: string, summary: string) {
+  const { getSession } = await import("@/lib/data/sessions")
+  const session = await getSession(sessionId)
+  if (!session) return
+  session.summary = summary
+  session.updatedAt = new Date().toISOString()
+  await updateSession(session)
+  revalidatePath(`/clients/${session.clientId}`)
 }
 
 export async function completeSessionAction(sessionId: string, clientId: string) {

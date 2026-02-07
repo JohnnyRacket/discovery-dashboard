@@ -2,7 +2,6 @@
 
 import { useRef, useEffect, useCallback, KeyboardEvent } from "react"
 import { SubItemType } from "@/lib/types"
-import { SUB_ITEM_TYPE_ORDER } from "@/lib/constants"
 import { cycleSubItemType, getSubItemTypeByIndex } from "./session-reducer"
 
 interface SubItemEditorProps {
@@ -17,11 +16,8 @@ interface SubItemEditorProps {
   onToggleImportant: () => void
   onNavigateUp: () => void
   onNavigateDown: () => void
-  onNavigateLeft: () => void
-  onNavigateRight: () => void
-  onAddDiscoveryItem: () => void
   onQuickAddFollowUp: () => void
-  onQuickAddActionItem: () => void
+  onDiscardIfEmpty: () => void
   onSave: () => void
   autoFocus?: boolean
   focusKey?: number
@@ -39,11 +35,8 @@ export function SubItemEditor({
   onToggleImportant,
   onNavigateUp,
   onNavigateDown,
-  onNavigateLeft,
-  onNavigateRight,
-  onAddDiscoveryItem,
   onQuickAddFollowUp,
-  onQuickAddActionItem,
+  onDiscardIfEmpty,
   onSave,
   autoFocus,
   focusKey,
@@ -75,7 +68,7 @@ export function SubItemEditor({
         return
       }
 
-      // Cmd+Enter - confirm and move to next discovery item
+      // Cmd+Enter - confirm and add new discovery item after current
       if (e.key === "Enter" && isMeta && !e.shiftKey) {
         e.preventDefault()
         onConfirmAndNext()
@@ -94,8 +87,8 @@ export function SubItemEditor({
         return
       }
 
-      // Cmd+I - toggle important
-      if (e.key === "i" && isMeta) {
+      // Cmd+B - toggle important (bold)
+      if (e.key === "b" && isMeta) {
         e.preventDefault()
         onToggleImportant()
         return
@@ -122,20 +115,6 @@ export function SubItemEditor({
         return
       }
 
-      // Cmd+Shift+A - quick action-item
-      if (e.key === "a" && isMeta && e.shiftKey) {
-        e.preventDefault()
-        onQuickAddActionItem()
-        return
-      }
-
-      // Alt+N / Cmd+N - add discovery item
-      if (e.key === "n" && (e.altKey || isMeta)) {
-        e.preventDefault()
-        onAddDiscoveryItem()
-        return
-      }
-
       // Up arrow - navigate up
       if (e.key === "ArrowUp" && !e.shiftKey) {
         const textarea = textareaRef.current
@@ -156,28 +135,8 @@ export function SubItemEditor({
         }
       }
 
-      // Left arrow - jump to prev discovery item
-      if (e.key === "ArrowLeft" && !e.shiftKey) {
-        const textarea = textareaRef.current
-        if (textarea && textarea.selectionStart === 0) {
-          e.preventDefault()
-          onNavigateLeft()
-          return
-        }
-      }
-
-      // Right arrow - jump to next discovery item
-      if (e.key === "ArrowRight" && !e.shiftKey) {
-        const textarea = textareaRef.current
-        if (textarea && textarea.selectionEnd === textarea.value.length) {
-          e.preventDefault()
-          onNavigateRight()
-          return
-        }
-      }
-
-      // Alt+1..7 - jump to type
-      if (e.altKey && e.key >= "1" && e.key <= "7") {
+      // Alt+1..4 - jump to type
+      if (e.altKey && e.key >= "1" && e.key <= "4") {
         e.preventDefault()
         const idx = parseInt(e.key) - 1
         const targetType = getSubItemTypeByIndex(idx)
@@ -188,10 +147,15 @@ export function SubItemEditor({
     [
       type, onTypeChange, onConfirm, onConfirmAndNext, onDelete,
       onToggleResolved, onToggleImportant, onNavigateUp, onNavigateDown,
-      onNavigateLeft, onNavigateRight, onAddDiscoveryItem,
-      onQuickAddFollowUp, onQuickAddActionItem, onSave,
+      onQuickAddFollowUp, onSave,
     ]
   )
+
+  const handleBlur = useCallback(() => {
+    if (content.trim() === "") {
+      onDiscardIfEmpty()
+    }
+  }, [content, onDiscardIfEmpty])
 
   // Auto-resize textarea
   useEffect(() => {
@@ -208,6 +172,7 @@ export function SubItemEditor({
       value={content}
       onChange={(e) => onContentChange(e.target.value)}
       onKeyDown={handleKeyDown}
+      onBlur={handleBlur}
       className="w-full resize-none bg-transparent text-sm outline-none placeholder:text-muted-foreground/50 min-h-[1.5rem] leading-relaxed"
       placeholder="Type here... (Tab to change type, Enter to confirm)"
       rows={1}

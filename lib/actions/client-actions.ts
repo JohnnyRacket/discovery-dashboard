@@ -3,7 +3,7 @@
 import { nanoid } from "nanoid"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
-import { createClient, updateClient, deleteClient } from "@/lib/data/clients"
+import { createClient, getClient, updateClient, deleteClient } from "@/lib/data/clients"
 import { Client } from "@/lib/types"
 
 export async function createClientAction(formData: FormData) {
@@ -20,6 +20,7 @@ export async function createClientAction(formData: FormData) {
     updatedAt: now,
   }
   await createClient(client)
+  revalidatePath("/")
   redirect(`/clients/${client.id}`)
 }
 
@@ -40,6 +41,15 @@ export async function updateClientAction(formData: FormData) {
   await updateClient(client)
   revalidatePath(`/clients/${id}`)
   redirect(`/clients/${id}`)
+}
+
+export async function saveClientNeedsSummary(clientId: string, needs: string[]) {
+  const client = await getClient(clientId)
+  if (!client) throw new Error("Client not found")
+  client.needsSummary = needs
+  client.updatedAt = new Date().toISOString()
+  await updateClient(client)
+  revalidatePath(`/clients/${clientId}`)
 }
 
 export async function deleteClientAction(id: string) {

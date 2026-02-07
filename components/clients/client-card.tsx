@@ -5,17 +5,19 @@ import { Client } from "@/lib/types"
 
 interface ClientCardProps {
   client: Client
+  blurred?: boolean
 }
 
-export function ClientCard({ client }: ClientCardProps) {
+export function ClientCard({ client, blurred }: ClientCardProps) {
+  const blurClass = blurred ? "blur-sm select-none" : ""
   return (
     <Link href={`/clients/${client.id}`}>
       <Card className="hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer">
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between">
             <div>
-              <CardTitle className="text-base">{client.name}</CardTitle>
-              <CardDescription>{client.company}</CardDescription>
+              <CardTitle className={`text-base ${blurClass}`}>{client.name}</CardTitle>
+              <CardDescription className={blurClass}>{client.company}</CardDescription>
             </div>
             {client.industry && (
               <Badge variant="secondary" className="text-xs">
