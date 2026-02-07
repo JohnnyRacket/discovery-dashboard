@@ -29,14 +29,14 @@ export function Breadcrumbs() {
   }
 
   return (
-    <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
+    <nav className="flex items-center gap-1.5 text-sm text-muted-foreground min-w-0">
       {crumbs.map((crumb, i) => (
-        <span key={crumb.href} className="flex items-center gap-1.5">
-          <span className="text-muted-foreground/50">/</span>
+        <span key={crumb.href} className="flex items-center gap-1.5 min-w-0">
+          <span className="text-muted-foreground/50 shrink-0">/</span>
           {i === crumbs.length - 1 ? (
-            <span className="text-foreground font-medium">{crumb.label}</span>
+            <span className="text-foreground font-medium max-w-[120px] sm:max-w-none truncate">{crumb.label}</span>
           ) : (
-            <Link href={crumb.href} className="hover:text-foreground transition-colors">
+            <Link href={crumb.href} className="hover:text-foreground transition-colors max-w-[120px] sm:max-w-none truncate">
               {crumb.label}
             </Link>
           )}

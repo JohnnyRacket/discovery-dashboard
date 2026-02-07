@@ -37,13 +37,13 @@ export function AppHeader() {
     <>
       <header className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="font-semibold text-lg text-primary">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <Link href="/" className="font-semibold text-lg text-primary shrink-0">
               Discovery
             </Link>
             <Breadcrumbs />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             {showPrivacyToggle && (
               <div className="flex items-center gap-1.5 mr-2">
                 <Switch
@@ -58,7 +58,7 @@ export function AppHeader() {
                   }}
                   aria-label="Privacy mode"
                 />
-                <label htmlFor="privacy-mode" className="text-xs text-muted-foreground cursor-pointer select-none">
+                <label htmlFor="privacy-mode" className="hidden sm:inline text-xs text-muted-foreground cursor-pointer select-none">
                   Privacy
                 </label>
               </div>
@@ -69,10 +69,11 @@ export function AppHeader() {
               className="text-muted-foreground text-xs gap-2"
               onClick={() => setShowCommandPalette(true)}
             >
-              <span>Search</span>
-              <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+              <span className="hidden sm:inline">Search</span>
+              <kbd className="pointer-events-none hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
                 ⌘K
               </kbd>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             </Button>
             <Button
               variant="ghost"
@@ -80,9 +81,10 @@ export function AppHeader() {
               className="text-muted-foreground text-xs"
               onClick={() => setShowHelp(true)}
             >
-              <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+              <kbd className="pointer-events-none hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
                 ?
               </kbd>
+              <span className="sm:hidden">?</span>
             </Button>
           </div>
         </div>

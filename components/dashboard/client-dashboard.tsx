@@ -20,29 +20,29 @@ export async function ClientDashboard({ client, sessions, followUps }: ClientDas
   const blurClass = blurred ? "blur-sm select-none" : ""
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between">
+    <div className="space-y-6 min-w-0">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div>
           <h1 className={`text-2xl font-bold ${blurClass}`}>{client.name}</h1>
           <p className={`text-muted-foreground ${blurClass}`}>{client.company}</p>
-          <div className="flex gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 mt-2">
             {client.industry && <Badge variant="secondary">{client.industry}</Badge>}
             {client.contactEmail && (
               <span className="text-sm text-muted-foreground">{client.contactEmail}</span>
             )}
           </div>
         </div>
-        <Button asChild>
+        <Button asChild className="self-start">
           <Link href={`/clients/${client.id}/sessions/new`}>New Session</Link>
         </Button>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-4">
+      <div className="grid gap-6 lg:grid-cols-3 min-w-0">
+        <div className="lg:col-span-2 space-y-4 overflow-hidden">
           <h2 className="text-lg font-semibold">Sessions</h2>
           <SessionList sessions={sessions} clientId={client.id} />
         </div>
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-hidden">
           <FollowUpPanel followUps={followUps} clientId={client.id} />
           <NeedsSummary clientId={client.id} initialNeeds={client.needsSummary} />
         </div>

@@ -48,8 +48,8 @@ export function NeedsSummary({ clientId, initialNeeds }: NeedsSummaryProps) {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium">Key Needs</CardTitle>
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="text-sm font-medium shrink-0">Key Needs</CardTitle>
           <Button
             variant="ghost"
             size="sm"

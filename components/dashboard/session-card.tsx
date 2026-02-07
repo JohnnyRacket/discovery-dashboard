@@ -64,18 +64,18 @@ export function SessionCard({ session }: SessionCardProps) {
     <Card className="hover:border-primary/30 hover:shadow-sm transition-all">
       <Link href={`/clients/${session.clientId}/sessions/${session.id}`}>
         <CardHeader className="pb-2">
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle className="text-base">{session.title}</CardTitle>
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <CardTitle className="text-base truncate">{session.title}</CardTitle>
               <CardDescription>{session.date}</CardDescription>
             </div>
-            <Badge variant={session.status === "active" ? "default" : "secondary"}>
+            <Badge variant={session.status === "active" ? "default" : "secondary"} className="shrink-0">
               {session.status}
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="pt-0">
-          <div className="flex gap-3 text-xs text-muted-foreground">
+          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
             <span>{itemCount} topics</span>
             <span>{subItemCount} items</span>
             {followUpCount > 0 && (

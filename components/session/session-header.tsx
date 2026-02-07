@@ -23,12 +23,12 @@ export function SessionHeader({ session, saveStatus, onSave, onComplete }: Sessi
   const statusInfo = statusConfig[saveStatus]
 
   return (
-    <div className="flex items-center justify-between pb-4 border-b">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b">
       <div>
         <h1 className="text-xl font-bold">{session.title}</h1>
         <p className="text-sm text-muted-foreground">{session.date}</p>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <Badge variant="secondary" className={`text-xs ${statusInfo.className}`}>
           {statusInfo.label}
         </Badge>

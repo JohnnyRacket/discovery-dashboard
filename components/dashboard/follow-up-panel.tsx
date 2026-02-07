@@ -50,7 +50,7 @@ export function FollowUpPanel({ followUps, clientId }: FollowUpPanelProps) {
                     )}
                   </p>
                 </div>
-                <Badge variant="secondary" className={`text-xs ${config.color} ${config.bgColor}`}>
+                <Badge variant="secondary" className={`text-xs shrink-0 ${config.color} ${config.bgColor}`}>
                   {config.label}
                 </Badge>
               </div>
