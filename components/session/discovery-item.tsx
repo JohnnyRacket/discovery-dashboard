@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useEffect } from "react"
+import { ChevronRight } from "lucide-react"
 import { DiscoveryItem as DiscoveryItemType, SubItemType } from "@/lib/types"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -50,7 +51,7 @@ export function DiscoveryItemCard({
   }, [focusTitleItemId, item.id, focusKey])
 
   return (
-    <Card className="border-l-4 border-l-primary/30">
+    <Card className="bg-muted/50 border-0 shadow-none">
       <Collapsible open={!item.collapsed}>
         <CardHeader className="pb-2 pt-3 px-4">
           <div className="flex items-center gap-2">
@@ -61,17 +62,17 @@ export function DiscoveryItemCard({
                 className="h-6 w-6 p-0 text-muted-foreground"
                 onClick={() => dispatch({ type: "TOGGLE_COLLAPSE", itemId: item.id })}
               >
-                {item.collapsed ? "▸" : "▾"}
+                <ChevronRight className={`h-4 w-4 transition-transform duration-200 ${item.collapsed ? "" : "rotate-90"}`} />
               </Button>
             </CollapsibleTrigger>
-            <span className="text-xs text-muted-foreground font-medium">#{itemIndex + 1}</span>
+            <span className="text-xs font-medium bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">{itemIndex + 1}</span>
             <input
               ref={titleRef}
               value={item.title}
               onChange={(e) =>
                 dispatch({ type: "UPDATE_DISCOVERY_ITEM_TITLE", itemId: item.id, title: e.target.value })
               }
-              className="flex-1 bg-transparent text-lg font-semibold outline-none placeholder:text-muted-foreground/50"
+              className="flex-1 bg-transparent text-base font-semibold outline-none placeholder:text-muted-foreground/50"
               placeholder="Discovery topic or question..."
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -150,14 +151,12 @@ export function DiscoveryItemCard({
                 />
               ))}
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="mt-1 text-xs text-muted-foreground h-7"
+            <button
+              className="mt-1.5 w-full h-7 border border-dashed border-muted-foreground/25 rounded-md text-xs text-muted-foreground/50 hover:border-muted-foreground/50 hover:text-muted-foreground transition-colors"
               onClick={() => dispatch({ type: "ADD_SUB_ITEM", itemId: item.id, subItemType: "note" })}
             >
               + Add item
-            </Button>
+            </button>
           </CardContent>
         </CollapsibleContent>
       </Collapsible>
