@@ -1,10 +1,14 @@
 import { getAllClients } from "@/lib/data/clients"
+import { getPrivacyClientId } from "@/lib/privacy"
 import { ClientList } from "@/components/clients/client-list"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 export default async function HomePage() {
-  const clients = await getAllClients()
+  const [clients, privacyClientId] = await Promise.all([
+    getAllClients(),
+    getPrivacyClientId(),
+  ])
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -19,7 +23,7 @@ export default async function HomePage() {
           <Link href="/clients/new">Add Client</Link>
         </Button>
       </div>
-      <ClientList clients={clients} />
+      <ClientList clients={clients} privacyClientId={privacyClientId} />
     </div>
   )
 }

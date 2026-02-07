@@ -18,6 +18,8 @@ interface SubItemProps {
   onToggleImportant: () => void
   onNavigateUp: () => void
   onNavigateDown: () => void
+  onJumpToPrevItem: () => void
+  onJumpToNextItem: () => void
   onQuickAddFollowUp: () => void
   onDiscardIfEmpty: () => void
   onSave: () => void
@@ -37,6 +39,8 @@ export function SubItemRow({
   onToggleImportant,
   onNavigateUp,
   onNavigateDown,
+  onJumpToPrevItem,
+  onJumpToNextItem,
   onQuickAddFollowUp,
   onDiscardIfEmpty,
   onSave,
@@ -66,6 +70,8 @@ export function SubItemRow({
           onToggleImportant={onToggleImportant}
           onNavigateUp={onNavigateUp}
           onNavigateDown={onNavigateDown}
+          onJumpToPrevItem={onJumpToPrevItem}
+          onJumpToNextItem={onJumpToNextItem}
           onQuickAddFollowUp={onQuickAddFollowUp}
           onDiscardIfEmpty={onDiscardIfEmpty}
           onSave={onSave}

@@ -85,6 +85,32 @@ export function SessionDetail({ initialSession }: SessionDetailProps) {
     [session.discoveryItems, setActive]
   )
 
+  const handleJumpToPrevItem = useCallback(
+    (itemId: string) => {
+      const itemIdx = session.discoveryItems.findIndex((i) => i.id === itemId)
+      if (itemIdx > 0) {
+        const prevItem = session.discoveryItems[itemIdx - 1]
+        if (prevItem.subItems.length > 0) {
+          setActive(prevItem.id, prevItem.subItems[0].id)
+        }
+      }
+    },
+    [session.discoveryItems, setActive]
+  )
+
+  const handleJumpToNextItem = useCallback(
+    (itemId: string) => {
+      const itemIdx = session.discoveryItems.findIndex((i) => i.id === itemId)
+      if (itemIdx < session.discoveryItems.length - 1) {
+        const nextItem = session.discoveryItems[itemIdx + 1]
+        if (nextItem.subItems.length > 0) {
+          setActive(nextItem.id, nextItem.subItems[0].id)
+        }
+      }
+    },
+    [session.discoveryItems, setActive]
+  )
+
   const handleConfirmAndNextItem = useCallback(
     (itemIndex: number) => {
       // Always add a new discovery item after the current one
@@ -165,6 +191,8 @@ export function SessionDetail({ initialSession }: SessionDetailProps) {
             onSetActive={setActive}
             onNavigateUp={handleNavigateUp}
             onNavigateDown={handleNavigateDown}
+            onJumpToPrevItem={handleJumpToPrevItem}
+            onJumpToNextItem={handleJumpToNextItem}
             onConfirmAndNextItem={handleConfirmAndNextItem}
             onQuickAdd={handleQuickAdd}
             onSave={forceSave}

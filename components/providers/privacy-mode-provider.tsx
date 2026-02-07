@@ -1,6 +1,7 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react"
+import { createContext, useContext, useState, useCallback, useMemo } from "react"
+import { useRouter } from "next/navigation"
 
 interface PrivacyModeContextValue {
   privacyClientId: string | null
@@ -11,36 +12,47 @@ interface PrivacyModeContextValue {
 
 const PrivacyModeContext = createContext<PrivacyModeContextValue | null>(null)
 
-const STORAGE_KEY = "privacy-client-id"
+const COOKIE_NAME = "privacy-client-id"
 
-export function PrivacyModeProvider({ children }: { children: React.ReactNode }) {
-  const [privacyClientId, setPrivacyClientIdState] = useState<string | null>(null)
-  const [hydrated, setHydrated] = useState(false)
+function getCookie(name: string): string | null {
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`))
+  return match ? decodeURIComponent(match[1]) : null
+}
 
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) {
-      setPrivacyClientIdState(stored)
-    }
-    setHydrated(true)
-  }, [])
+function setCookie(name: string, value: string) {
+  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`
+}
+
+function deleteCookie(name: string) {
+  document.cookie = `${name}=; path=/; max-age=0`
+}
+
+interface PrivacyModeProviderProps {
+  children: React.ReactNode
+  initialClientId?: string | null
+}
+
+export function PrivacyModeProvider({ children, initialClientId = null }: PrivacyModeProviderProps) {
+  const router = useRouter()
+  const [privacyClientId, setPrivacyClientIdState] = useState<string | null>(initialClientId)
 
   const setPrivacyClientId = useCallback((id: string) => {
     setPrivacyClientIdState(id)
-    localStorage.setItem(STORAGE_KEY, id)
-  }, [])
+    setCookie(COOKIE_NAME, id)
+    router.refresh()
+  }, [router])
 
   const clearPrivacy = useCallback(() => {
     setPrivacyClientIdState(null)
-    localStorage.removeItem(STORAGE_KEY)
-  }, [])
+    deleteCookie(COOKIE_NAME)
+    router.refresh()
+  }, [router])
 
   const isBlurred = useCallback(
     (clientId: string) => {
-      if (!hydrated) return false
       return privacyClientId !== null && clientId !== privacyClientId
     },
-    [privacyClientId, hydrated]
+    [privacyClientId]
   )
 
   const value = useMemo(

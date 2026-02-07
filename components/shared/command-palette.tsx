@@ -11,6 +11,7 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { Client } from "@/lib/types"
+import { usePrivacyMode } from "@/components/providers/privacy-mode-provider"
 
 interface CommandPaletteProps {
   open: boolean
@@ -20,6 +21,7 @@ interface CommandPaletteProps {
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const router = useRouter()
   const [clients, setClients] = useState<Client[]>([])
+  const { isBlurred } = usePrivacyMode()
 
   useEffect(() => {
     if (open) {
@@ -49,11 +51,15 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         </CommandGroup>
         {clients.length > 0 && (
           <CommandGroup heading="Clients">
-            {clients.map((client) => (
-              <CommandItem key={client.id} onSelect={() => navigate(`/clients/${client.id}`)}>
-                {client.name} — {client.company}
-              </CommandItem>
-            ))}
+            {clients.map((client) => {
+              const blurred = isBlurred(client.id)
+              const blurClass = blurred ? "blur-sm select-none" : ""
+              return (
+                <CommandItem key={client.id} onSelect={() => navigate(`/clients/${client.id}`)}>
+                  <span className={blurClass}>{client.name} — {client.company}</span>
+                </CommandItem>
+              )
+            })}
           </CommandGroup>
         )}
       </CommandList>

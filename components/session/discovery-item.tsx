@@ -18,6 +18,8 @@ interface DiscoveryItemProps {
   onSetActive: (itemId: string, subItemId: string | null) => void
   onNavigateUp: (itemId: string, subItemIndex: number) => void
   onNavigateDown: (itemId: string, subItemIndex: number) => void
+  onJumpToPrevItem: (itemId: string) => void
+  onJumpToNextItem: (itemId: string) => void
   onConfirmAndNextItem: (itemIndex: number) => void
   onQuickAdd: (itemId: string, type: SubItemType) => void
   onSave: () => void
@@ -33,6 +35,8 @@ export function DiscoveryItemCard({
   onSetActive,
   onNavigateUp,
   onNavigateDown,
+  onJumpToPrevItem,
+  onJumpToNextItem,
   onConfirmAndNextItem,
   onQuickAdd,
   onSave,
@@ -132,6 +136,8 @@ export function DiscoveryItemCard({
                   onToggleImportant={() => dispatch({ type: "TOGGLE_IMPORTANT", itemId: item.id, subItemId: subItem.id })}
                   onNavigateUp={() => onNavigateUp(item.id, subIndex)}
                   onNavigateDown={() => onNavigateDown(item.id, subIndex)}
+                  onJumpToPrevItem={() => onJumpToPrevItem(item.id)}
+                  onJumpToNextItem={() => onJumpToNextItem(item.id)}
                   onQuickAddFollowUp={() => onQuickAdd(item.id, "follow-up")}
                   onDiscardIfEmpty={() => {
                     // Don't delete if it's the only sub-item

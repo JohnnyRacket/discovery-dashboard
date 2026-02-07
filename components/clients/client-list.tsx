@@ -6,16 +6,15 @@ import { ClientSearch } from "./client-search"
 import { ClientCard } from "./client-card"
 import { EmptyState } from "@/components/shared/empty-state"
 import { Button } from "@/components/ui/button"
-import { usePrivacyMode } from "@/components/providers/privacy-mode-provider"
 import Link from "next/link"
 
 interface ClientListProps {
   clients: Client[]
+  privacyClientId: string | null
 }
 
-export function ClientList({ clients }: ClientListProps) {
+export function ClientList({ clients, privacyClientId }: ClientListProps) {
   const [search, setSearch] = useState("")
-  const { isBlurred } = usePrivacyMode()
 
   const filtered = useMemo(() => {
     if (!search) return clients
@@ -47,7 +46,11 @@ export function ClientList({ clients }: ClientListProps) {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((client) => (
-            <ClientCard key={client.id} client={client} blurred={isBlurred(client.id)} />
+            <ClientCard
+              key={client.id}
+              client={client}
+              blurred={privacyClientId !== null && client.id !== privacyClientId}
+            />
           ))}
         </div>
       )}

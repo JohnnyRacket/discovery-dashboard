@@ -16,6 +16,8 @@ interface SubItemEditorProps {
   onToggleImportant: () => void
   onNavigateUp: () => void
   onNavigateDown: () => void
+  onJumpToPrevItem: () => void
+  onJumpToNextItem: () => void
   onQuickAddFollowUp: () => void
   onDiscardIfEmpty: () => void
   onSave: () => void
@@ -35,6 +37,8 @@ export function SubItemEditor({
   onToggleImportant,
   onNavigateUp,
   onNavigateDown,
+  onJumpToPrevItem,
+  onJumpToNextItem,
   onQuickAddFollowUp,
   onDiscardIfEmpty,
   onSave,
@@ -115,6 +119,20 @@ export function SubItemEditor({
         return
       }
 
+      // Cmd+Up - jump to previous discovery item
+      if (e.key === "ArrowUp" && isMeta && !e.shiftKey) {
+        e.preventDefault()
+        onJumpToPrevItem()
+        return
+      }
+
+      // Cmd+Down - jump to next discovery item
+      if (e.key === "ArrowDown" && isMeta && !e.shiftKey) {
+        e.preventDefault()
+        onJumpToNextItem()
+        return
+      }
+
       // Up arrow - navigate up
       if (e.key === "ArrowUp" && !e.shiftKey) {
         const textarea = textareaRef.current
@@ -147,7 +165,7 @@ export function SubItemEditor({
     [
       type, onTypeChange, onConfirm, onConfirmAndNext, onDelete,
       onToggleResolved, onToggleImportant, onNavigateUp, onNavigateDown,
-      onQuickAddFollowUp, onSave,
+      onJumpToPrevItem, onJumpToNextItem, onQuickAddFollowUp, onSave,
     ]
   )
 

@@ -5,6 +5,7 @@ import { AppHeader } from "@/components/layout/app-header"
 import { KeyboardShortcutProvider } from "@/components/providers/keyboard-shortcut-provider"
 import { PrivacyModeProvider } from "@/components/providers/privacy-mode-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { getPrivacyClientId } from "@/lib/privacy"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,16 +22,18 @@ export const metadata: Metadata = {
   description: "Sales engineering discovery call management",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const privacyClientId = await getPrivacyClientId()
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}>
         <TooltipProvider>
-          <PrivacyModeProvider>
+          <PrivacyModeProvider initialClientId={privacyClientId}>
             <KeyboardShortcutProvider>
               <div className="min-h-screen flex flex-col">
                 <AppHeader />
