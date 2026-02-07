@@ -1,43 +1,34 @@
-import { redis } from "@/lib/redis"
+import { getBlob, putBlob, delBlob, listBlobs, findBlob } from "@/lib/blob"
 import { Client } from "@/lib/types"
 
-const CLIENTS_KEY = "clients"
-const clientKey = (id: string) => `client:${id}`
-
 export async function getAllClients(): Promise<Client[]> {
-  const ids = await redis.zrange(CLIENTS_KEY, 0, -1, { rev: true })
-  if (!ids.length) return []
-  const pipeline = redis.pipeline()
-  for (const id of ids) {
-    pipeline.get(clientKey(id as string))
-  }
-  const results = await pipeline.exec()
-  return results.filter(Boolean) as Client[]
+  const blobs = await listBlobs("clients/")
+  if (!blobs.length) return []
+  const clients = await Promise.all(
+    blobs.map((b) => getBlob<Client>(b.url))
+  )
+  return (clients.filter(Boolean) as Client[]).sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  )
 }
 
 export async function getClient(id: string): Promise<Client | null> {
-  return redis.get<Client>(clientKey(id))
+  const blob = await findBlob(`clients/${id}.json`)
+  if (!blob) return null
+  return getBlob<Client>(blob.url)
 }
 
 export async function createClient(client: Client): Promise<void> {
-  const pipeline = redis.pipeline()
-  pipeline.set(clientKey(client.id), JSON.stringify(client))
-  pipeline.zadd(CLIENTS_KEY, { score: Date.now(), member: client.id })
-  await pipeline.exec()
+  await putBlob(`clients/${client.id}.json`, client)
 }
 
 export async function updateClient(client: Client): Promise<void> {
-  const pipeline = redis.pipeline()
-  pipeline.set(clientKey(client.id), JSON.stringify(client))
-  pipeline.zadd(CLIENTS_KEY, { score: Date.now(), member: client.id })
-  await pipeline.exec()
+  await putBlob(`clients/${client.id}.json`, client)
 }
 
 export async function deleteClient(id: string): Promise<void> {
-  const pipeline = redis.pipeline()
-  pipeline.del(clientKey(id))
-  pipeline.zrem(CLIENTS_KEY, id)
-  await pipeline.exec()
+  const blob = await findBlob(`clients/${id}.json`)
+  if (blob) await delBlob(blob.url)
 }
 
 export async function searchClients(query: string): Promise<Client[]> {

@@ -1,7 +1,5 @@
-import { redis } from "@/lib/redis"
+import { getBlob, putBlob, findBlob } from "@/lib/blob"
 import { Session, SubItem } from "@/lib/types"
-
-const followupsKey = (clientId: string) => `followups:${clientId}`
 
 export interface FollowUpEntry {
   clientId: string
@@ -12,47 +10,39 @@ export interface FollowUpEntry {
 }
 
 export async function getClientFollowUps(clientId: string): Promise<FollowUpEntry[]> {
-  const entries = await redis.zrange(followupsKey(clientId), 0, -1, { rev: true })
-  return (entries as unknown as FollowUpEntry[]) || []
+  const blob = await findBlob(`followups/${clientId}.json`)
+  if (!blob) return []
+  return (await getBlob<FollowUpEntry[]>(blob.url)) ?? []
 }
 
 export async function rebuildFollowUpIndex(session: Session): Promise<void> {
-  const key = followupsKey(session.clientId)
+  const clientId = session.clientId
 
-  // Remove old entries for this session
-  const existing = await redis.zrange(key, 0, -1) as string[]
-  const toRemove = existing.filter((e) => {
-    try {
-      const parsed = typeof e === "string" ? JSON.parse(e) : e
-      return parsed.sessionId === session.id
-    } catch {
-      return false
-    }
-  })
-  if (toRemove.length) {
-    const pipeline = redis.pipeline()
-    for (const entry of toRemove) {
-      pipeline.zrem(key, entry)
-    }
-    await pipeline.exec()
-  }
+  // Load existing entries, keep those from other sessions
+  const existing = await getClientFollowUps(clientId)
+  const kept = existing.filter((e) => e.sessionId !== session.id)
 
-  // Add current follow-ups and action-items
-  const pipeline = redis.pipeline()
+  // Build new entries from this session
+  const newEntries: FollowUpEntry[] = []
   for (const item of session.discoveryItems) {
     for (const sub of item.subItems) {
       if ((sub.type === "follow-up" || sub.type === "action-item") && !sub.resolved) {
-        const entry: FollowUpEntry = {
-          clientId: session.clientId,
+        newEntries.push({
+          clientId,
           sessionId: session.id,
           discoveryItemId: item.id,
           discoveryItemTitle: item.title,
           subItem: sub,
-        }
-        const score = sub.dueDate ? new Date(sub.dueDate).getTime() : Date.now()
-        pipeline.zadd(key, { score, member: JSON.stringify(entry) })
+        })
       }
     }
   }
-  await pipeline.exec()
+
+  const all = [...kept, ...newEntries].sort((a, b) => {
+    const aTime = a.subItem.dueDate ? new Date(a.subItem.dueDate).getTime() : Infinity
+    const bTime = b.subItem.dueDate ? new Date(b.subItem.dueDate).getTime() : Infinity
+    return aTime - bTime
+  })
+
+  await putBlob(`followups/${clientId}.json`, all)
 }
