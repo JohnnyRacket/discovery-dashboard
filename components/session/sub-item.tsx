@@ -50,14 +50,16 @@ export function SubItemRow({
   return (
     <div
       className={`flex items-start gap-2 pl-5 pr-3 py-1.5 rounded-md transition-colors group ${
-        isActive ? "bg-accent/40 ring-1 ring-accent" : "hover:bg-accent/30"
+        subItem.resolved
+          ? "bg-muted"
+          : isActive ? "bg-accent/40 ring-1 ring-accent" : "hover:bg-accent/30"
       }`}
       onClick={onFocus}
     >
       <div className="flex-shrink-0">
         <SubItemTypeBadge type={subItem.type} />
       </div>
-      <div className={`flex-1 min-w-0 mt-0.5 -mb-[6px] ${subItem.resolved ? "line-through opacity-50" : ""} ${subItem.important ? "font-bold" : ""}`}>
+      <div className={`flex-1 min-w-0 mt-0.5 -mb-[6px] ${subItem.resolved ? "text-muted-foreground" : ""} ${subItem.important ? "font-bold" : ""}`}>
         <SubItemEditor
           content={subItem.content}
           type={subItem.type}
@@ -79,9 +81,9 @@ export function SubItemRow({
           focusKey={focusKey}
         />
       </div>
+      {subItem.resolved && <span className="text-xs font-medium text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/40 px-1.5 py-0.5 rounded flex-shrink-0 mt-0.5">Done</span>}
       <div className="flex items-center gap-1 flex-shrink-0 mt-0.5 -mb-[3px] opacity-0 group-hover:opacity-100 transition-opacity">
         {subItem.important && <span className="text-xs">⭐</span>}
-        {subItem.resolved && <span className="text-xs">✓</span>}
         <Button
           variant="ghost"
           size="sm"

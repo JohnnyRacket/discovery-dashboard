@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     .join("\n\n")
 
   const result = streamText({
-    model: gateway("anthropic/claude-sonnet-4-5-20250929"),
+    model: gateway("deepseek/deepseek-v3.2"),
     system: `You are a sales engineering assistant. Provide concise, actionable summaries of discovery sessions.`,
     prompt: `Summarize this discovery session titled "${session.title}" from ${session.date} in 2-3 sentences. Be extremely brief. Do not use markdown formatting. Plain text only. Focus on what was discussed, key findings, and any important next steps.
 

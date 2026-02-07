@@ -15,7 +15,8 @@ export function Breadcrumbs() {
     const href = "/" + segments.slice(0, i + 1).join("/")
 
     if (seg === "clients") {
-      crumbs.push({ label: "Clients", href: "/" })
+      // Skip - "Discovery" header already links to /
+      continue
     } else if (seg === "new") {
       crumbs.push({ label: "New", href })
     } else if (seg === "sessions") {
