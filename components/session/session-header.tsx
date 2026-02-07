@@ -10,6 +10,7 @@ interface SessionHeaderProps {
   saveStatus: SaveStatus
   onSave: () => void
   onComplete: () => void
+  onResume: () => void
 }
 
 const statusConfig: Record<SaveStatus, { label: string; className: string }> = {
@@ -19,7 +20,7 @@ const statusConfig: Record<SaveStatus, { label: string; className: string }> = {
   error: { label: "Save error", className: "text-red-600 bg-red-50" },
 }
 
-export function SessionHeader({ session, saveStatus, onSave, onComplete }: SessionHeaderProps) {
+export function SessionHeader({ session, saveStatus, onSave, onComplete, onResume }: SessionHeaderProps) {
   const statusInfo = statusConfig[saveStatus]
 
   return (
@@ -32,12 +33,13 @@ export function SessionHeader({ session, saveStatus, onSave, onComplete }: Sessi
         <Badge variant="secondary" className={`text-xs ${statusInfo.className}`}>
           {statusInfo.label}
         </Badge>
-        <Badge variant={session.status === "active" ? "default" : "secondary"}>
-          {session.status}
-        </Badge>
-        {session.status === "active" && (
+        {session.status === "active" ? (
           <Button variant="outline" size="sm" onClick={onComplete}>
             Complete Session
+          </Button>
+        ) : (
+          <Button variant="outline" size="sm" onClick={onResume}>
+            Resume Session
           </Button>
         )}
         <Button size="sm" onClick={onSave}>

@@ -2,6 +2,7 @@ import { Client, Session } from "@/lib/types"
 import { FollowUpEntry } from "@/lib/data/follow-ups"
 import { SessionList } from "./session-list"
 import { FollowUpPanel } from "./follow-up-panel"
+import { ContactsPanel } from "./contacts-panel"
 import { NeedsSummary } from "./needs-summary"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -31,9 +32,6 @@ export async function ClientDashboard({ client, sessions, followUps }: ClientDas
           </p>
           <div className="flex flex-wrap gap-2 mt-2">
             {client.industry && <Badge variant="secondary">{client.industry}</Badge>}
-            {client.contactEmail && (
-              <span className="text-sm text-muted-foreground">{client.contactEmail}</span>
-            )}
           </div>
         </div>
         <Button asChild className="self-start">
@@ -43,12 +41,13 @@ export async function ClientDashboard({ client, sessions, followUps }: ClientDas
 
       <div className="grid gap-6 lg:grid-cols-3 min-w-0">
         <div className="lg:col-span-2 space-y-4 overflow-hidden">
+          <NeedsSummary clientId={client.id} initialNeeds={client.needsSummary} />
           <h2 className="text-lg font-semibold">Sessions</h2>
           <SessionList sessions={sessions} clientId={client.id} />
         </div>
         <div className="space-y-4 overflow-hidden">
-          <FollowUpPanel followUps={followUps} clientId={client.id} />
-          <NeedsSummary clientId={client.id} initialNeeds={client.needsSummary} />
+          <ContactsPanel clientId={client.id} contacts={client.contacts ?? []} />
+          <FollowUpPanel followUps={followUps} clientId={client.id} contacts={client.contacts ?? []} />
         </div>
       </div>
     </div>

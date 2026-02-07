@@ -23,14 +23,6 @@ export function ClientForm() {
             <Input id="company" name="company" required placeholder="Company name" />
           </div>
           <div className="space-y-2">
-            <label htmlFor="contactEmail" className="text-sm font-medium">Email</label>
-            <Input id="contactEmail" name="contactEmail" type="email" placeholder="email@company.com" />
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="contactPhone" className="text-sm font-medium">Phone</label>
-            <Input id="contactPhone" name="contactPhone" placeholder="+1 (555) 000-0000" />
-          </div>
-          <div className="space-y-2">
             <label htmlFor="industry" className="text-sm font-medium">Industry</label>
             <Input id="industry" name="industry" placeholder="e.g. Healthcare, Finance" />
           </div>

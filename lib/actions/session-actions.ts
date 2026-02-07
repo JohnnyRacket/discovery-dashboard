@@ -54,3 +54,13 @@ export async function completeSessionAction(sessionId: string, clientId: string)
   await rebuildFollowUpIndex(session)
   revalidatePath(`/clients/${clientId}`)
 }
+
+export async function resumeSessionAction(sessionId: string, clientId: string) {
+  const { getSession } = await import("@/lib/data/sessions")
+  const session = await getSession(sessionId)
+  if (!session) return
+  session.status = "active"
+  session.updatedAt = new Date().toISOString()
+  await updateSession(session)
+  revalidatePath(`/clients/${clientId}`)
+}

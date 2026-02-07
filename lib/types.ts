@@ -34,14 +34,24 @@ export interface Session {
   updatedAt: string
 }
 
+export interface Contact {
+  id: string
+  name: string
+  role?: string
+  email?: string
+  phone?: string
+  notes?: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface Client {
   id: string
   name: string
   company: string
-  contactEmail?: string
-  contactPhone?: string
   industry?: string
   notes?: string
+  contacts?: Contact[]
   needsSummary?: string[]
   createdAt: string
   updatedAt: string

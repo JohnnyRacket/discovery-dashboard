@@ -28,8 +28,8 @@ export async function POST(request: Request) {
 
   const result = await generateText({
     model: gateway("deepseek/deepseek-v3.2"),
-    system: `You are a sales engineering assistant. Analyze discovery session data and identify key client needs. Return ONLY a JSON array of strings. No markdown, no headers, no explanation. Each string is one key need, 1 sentence max.`,
-    prompt: `Based on these ${completedSessions.length} completed discovery sessions, identify the client's key needs and requirements. Deduplicate and prioritize by importance/frequency.
+    system: `You are a sales engineering assistant. Analyze discovery session data and identify the client's key pain points and needs. Return ONLY a JSON array of strings. No markdown, no headers, no explanation. Each string is one pain point or need, 1 sentence max.`,
+    prompt: `Based on these ${completedSessions.length} completed discovery sessions, identify the client's key pain points, challenges, and needs. Focus on what problems they're trying to solve and what they need most. Deduplicate and prioritize by importance/frequency.
 
 ${context}
 

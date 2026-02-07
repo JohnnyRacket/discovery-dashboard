@@ -49,7 +49,7 @@ export function NeedsSummary({ clientId, initialNeeds }: NeedsSummaryProps) {
     <Card>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-sm font-medium shrink-0">Key Needs</CardTitle>
+          <CardTitle className="text-sm font-medium shrink-0">Client Summary</CardTitle>
           <Button
             variant="ghost"
             size="sm"
@@ -57,7 +57,7 @@ export function NeedsSummary({ clientId, initialNeeds }: NeedsSummaryProps) {
             onClick={handleGenerate}
             disabled={isGenerating}
           >
-            {isGenerating ? "Generating..." : needs.length > 0 ? "Regenerate" : "Generate Summary"}
+            {isGenerating ? "Generating..." : needs.length > 0 ? "Regenerate" : "Generate"}
           </Button>
         </div>
       </CardHeader>
@@ -72,7 +72,7 @@ export function NeedsSummary({ clientId, initialNeeds }: NeedsSummaryProps) {
           </ul>
         ) : (
           <p className="text-sm text-muted-foreground">
-            Generate a summary of key needs from completed sessions.
+            Generate a summary of key pain points and needs from completed sessions.
           </p>
         )}
       </CardContent>

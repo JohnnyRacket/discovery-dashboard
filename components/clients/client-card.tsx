@@ -26,10 +26,12 @@ export function ClientCard({ client, blurred }: ClientCardProps) {
             )}
           </div>
         </CardHeader>
-        {(client.contactEmail || client.notes) && (
+        {((client.contacts && client.contacts.length > 0) || client.notes) && (
           <CardContent className="pt-0">
-            {client.contactEmail && (
-              <p className="text-xs text-muted-foreground">{client.contactEmail}</p>
+            {client.contacts && client.contacts.length > 0 && (
+              <p className="text-xs text-muted-foreground">
+                {client.contacts.length} contact{client.contacts.length !== 1 ? "s" : ""}
+              </p>
             )}
             {client.notes && (
               <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{client.notes}</p>

@@ -7,6 +7,7 @@ export interface FollowUpEntry {
   discoveryItemId: string
   discoveryItemTitle: string
   subItem: SubItem
+  contactId?: string
 }
 
 export async function getClientFollowUps(clientId: string): Promise<FollowUpEntry[]> {
@@ -22,6 +23,12 @@ export async function rebuildFollowUpIndex(session: Session): Promise<void> {
   const existing = await getClientFollowUps(clientId)
   const kept = existing.filter((e) => e.sessionId !== session.id)
 
+  // Build a map of existing contactId assignments by subItem id
+  const existingContactMap = new Map<string, string>()
+  for (const e of existing) {
+    if (e.contactId) existingContactMap.set(e.subItem.id, e.contactId)
+  }
+
   // Build new entries from this session
   const newEntries: FollowUpEntry[] = []
   for (const item of session.discoveryItems) {
@@ -33,6 +40,7 @@ export async function rebuildFollowUpIndex(session: Session): Promise<void> {
           discoveryItemId: item.id,
           discoveryItemTitle: item.title,
           subItem: sub,
+          contactId: existingContactMap.get(sub.id),
         })
       }
     }

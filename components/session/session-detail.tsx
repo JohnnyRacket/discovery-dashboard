@@ -1,7 +1,6 @@
 "use client"
 
 import { useReducer, useState, useCallback, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Session, SubItemType } from "@/lib/types"
 import { sessionReducer, SessionAction } from "./session-reducer"
 import { DiscoveryItemCard } from "./discovery-item"
@@ -9,14 +8,13 @@ import { SessionHeader } from "./session-header"
 import { SessionNotes } from "./session-notes"
 import { Button } from "@/components/ui/button"
 import { useDebouncedSave } from "@/lib/hooks/use-debounced-save"
-import { completeSessionAction } from "@/lib/actions/session-actions"
+import { completeSessionAction, resumeSessionAction } from "@/lib/actions/session-actions"
 
 interface SessionDetailProps {
   initialSession: Session
 }
 
 export function SessionDetail({ initialSession }: SessionDetailProps) {
-  const router = useRouter()
   const [session, dispatch] = useReducer(sessionReducer, initialSession)
   const [activeItemId, setActiveItemId] = useState<string | null>(null)
   const [activeSubItemId, setActiveSubItemId] = useState<string | null>(null)
@@ -148,8 +146,12 @@ export function SessionDetail({ initialSession }: SessionDetailProps) {
   const handleComplete = useCallback(async () => {
     await completeSessionAction(session.id, session.clientId)
     dispatch({ type: "SET_STATUS", status: "completed" })
-    router.push(`/clients/${session.clientId}`)
-  }, [session.id, session.clientId, router])
+  }, [session.id, session.clientId])
+
+  const handleResume = useCallback(async () => {
+    await resumeSessionAction(session.id, session.clientId)
+    dispatch({ type: "SET_STATUS", status: "active" })
+  }, [session.id, session.clientId])
 
   // Collapse/expand keyboard shortcuts
   useEffect(() => {
@@ -176,6 +178,7 @@ export function SessionDetail({ initialSession }: SessionDetailProps) {
         saveStatus={status}
         onSave={forceSave}
         onComplete={handleComplete}
+        onResume={handleResume}
       />
 
       <div className="space-y-3">
