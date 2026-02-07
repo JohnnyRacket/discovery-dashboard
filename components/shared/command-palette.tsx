@@ -55,7 +55,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               const blurred = isBlurred(client.id)
               const blurClass = blurred ? "blur-sm select-none" : ""
               return (
-                <CommandItem key={client.id} onSelect={() => navigate(`/clients/${client.id}`)}>
+                <CommandItem key={client.id} disabled={blurred} onSelect={() => !blurred && navigate(`/clients/${client.id}`)}>
                   <span className={blurClass}>{client.name} — {client.company}</span>
                 </CommandItem>
               )

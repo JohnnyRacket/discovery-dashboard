@@ -9,9 +9,8 @@ interface ClientCardProps {
 }
 
 export function ClientCard({ client, blurred }: ClientCardProps) {
-  return (
-    <Link href={`/clients/${client.id}`}>
-      <Card className="hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer">
+  const card = (
+      <Card className={`transition-all ${blurred ? "cursor-default opacity-60" : "hover:border-primary/30 hover:shadow-sm cursor-pointer"}`}>
         <CardHeader className={`pb-2 ${blurred ? "blur select-none" : ""}`}>
           <div className="flex items-start justify-between">
             <div>
@@ -38,6 +37,8 @@ export function ClientCard({ client, blurred }: ClientCardProps) {
           </CardContent>
         )}
       </Card>
-    </Link>
   )
+
+  if (blurred) return card
+  return <Link href={`/clients/${client.id}`}>{card}</Link>
 }
