@@ -4,6 +4,8 @@ import { nanoid } from "nanoid"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { createClient, getClient, updateClient, deleteClient } from "@/lib/data/clients"
+import { getClientSessions, deleteSession } from "@/lib/data/sessions"
+import { findBlob, delBlob } from "@/lib/blob"
 import { Client } from "@/lib/types"
 
 export async function createClientAction(formData: FormData) {
@@ -53,6 +55,15 @@ export async function saveClientNeedsSummary(clientId: string, needs: string[]) 
 }
 
 export async function deleteClientAction(id: string) {
+  // Delete all sessions for this client
+  const sessions = await getClientSessions(id)
+  await Promise.all(sessions.map((s) => deleteSession(s)))
+
+  // Delete follow-ups blob
+  const followUpBlob = await findBlob(`followups/${id}.json`)
+  if (followUpBlob) await delBlob(followUpBlob.url)
+
+  // Delete the client
   await deleteClient(id)
   revalidatePath("/")
   redirect("/")

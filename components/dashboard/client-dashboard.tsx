@@ -6,6 +6,7 @@ import { NeedsSummary } from "./needs-summary"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { getPrivacyClientId } from "@/lib/privacy"
+import { DeleteClientDialog } from "./delete-client-dialog"
 import Link from "next/link"
 
 interface ClientDashboardProps {
@@ -24,7 +25,10 @@ export async function ClientDashboard({ client, sessions, followUps }: ClientDas
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div>
           <h1 className={`text-2xl font-bold ${blurClass}`}>{client.name}</h1>
-          <p className={`text-muted-foreground ${blurClass}`}>{client.company}</p>
+          <p className={`text-muted-foreground ${blurClass} inline-flex items-center gap-2`}>
+            {client.company}
+            {!blurred && <DeleteClientDialog clientId={client.id} companyName={client.company} />}
+          </p>
           <div className="flex flex-wrap gap-2 mt-2">
             {client.industry && <Badge variant="secondary">{client.industry}</Badge>}
             {client.contactEmail && (
