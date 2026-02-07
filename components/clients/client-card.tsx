@@ -9,15 +9,14 @@ interface ClientCardProps {
 }
 
 export function ClientCard({ client, blurred }: ClientCardProps) {
-  const blurClass = blurred ? "blur-sm select-none" : ""
   return (
     <Link href={`/clients/${client.id}`}>
       <Card className="hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer">
-        <CardHeader className="pb-2">
+        <CardHeader className={`pb-2 ${blurred ? "blur select-none" : ""}`}>
           <div className="flex items-start justify-between">
             <div>
-              <CardTitle className={`text-base ${blurClass}`}>{client.name}</CardTitle>
-              <CardDescription className={blurClass}>{client.company}</CardDescription>
+              <CardTitle className="text-base">{client.name}</CardTitle>
+              <CardDescription>{client.company}</CardDescription>
             </div>
             {client.industry && (
               <Badge variant="secondary" className="text-xs">
@@ -27,7 +26,7 @@ export function ClientCard({ client, blurred }: ClientCardProps) {
           </div>
         </CardHeader>
         {((client.contacts && client.contacts.length > 0) || client.notes) && (
-          <CardContent className="pt-0">
+          <CardContent className={`pt-0 ${blurred ? "blur select-none" : ""}`}>
             {client.contacts && client.contacts.length > 0 && (
               <p className="text-xs text-muted-foreground">
                 {client.contacts.length} contact{client.contacts.length !== 1 ? "s" : ""}
