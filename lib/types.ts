@@ -1,4 +1,4 @@
-export type SubItemType = "note" | "follow-up" | "special-case" | "requirement"
+export type SubItemType = "note" | "follow-up" | "special-case" | "requirement" | "question"
 
 export interface SubItem {
   id: string

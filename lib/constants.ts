@@ -5,6 +5,7 @@ export const SUB_ITEM_TYPE_ORDER: SubItemType[] = [
   "follow-up",
   "special-case",
   "requirement",
+  "question",
 ]
 
 export const SUB_ITEM_TYPE_CONFIG: Record<SubItemType, { label: string; icon: string; color: string; bgColor: string }> = {
@@ -31,6 +32,12 @@ export const SUB_ITEM_TYPE_CONFIG: Record<SubItemType, { label: string; icon: st
     icon: "📋",
     color: "text-green-600",
     bgColor: "bg-green-50",
+  },
+  "question": {
+    label: "Question",
+    icon: "❓",
+    color: "text-amber-600",
+    bgColor: "bg-amber-50",
   },
 }
 

@@ -154,7 +154,7 @@ export function SubItemEditor({
       }
 
       // Alt+1..4 - jump to type
-      if (e.altKey && e.key >= "1" && e.key <= "4") {
+      if (e.altKey && e.key >= "1" && e.key <= "5") {
         e.preventDefault()
         const idx = parseInt(e.key) - 1
         const targetType = getSubItemTypeByIndex(idx)
